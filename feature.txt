@@ -1,0 +1,250 @@
+================================================================================
+CAREBRIDGE - FEATURE LIST
+================================================================================
+Patient Transfer-Centric Healthcare Platform for Google TechSprint 2026
+================================================================================
+
+CORE FEATURES (REQUIRED)
+================================================================================
+
+1. AUTHENTICATION & USER MANAGEMENT
+   ✓ Email + Password authentication via Supabase
+   ✓ Patient self-registration (Email + Password). Doctor and Hospital accounts are system-managed (not self-registered).
+   ✓ User login/logout functionality
+   ✓ User profile management
+   ✓ Session management and persistence
+   ✓ Password-based authentication only (no social login, OTP, or magic links)
+
+2. ROLE-BASED ACCESS CONTROL
+   ✓ Three user roles: Patient, Doctor, Hospital
+   ✓ Role-specific dashboards and navigation
+   ✓ Server-side role verification
+   ✓ Middleware-based route protection
+   ✓ Application-level access control for demo stability
+
+3. PATIENT HEALTH DATA MANAGEMENT
+   ✓ Patient profile creation and management
+   ✓ Health records CRUD operations
+   ✓ Vital signs tracking:
+     - Blood Pressure (Systolic/Diastolic)
+     - Heart Rate
+     - Sugar Level
+   ✓ Time-series data storage for trend analysis
+   ✓ Recorded timestamps for all health data
+
+4. HEALTH DATA VISUALIZATION
+   ✓ Interactive charts using Recharts
+   ✓ Multi-vital trend visualization over time
+   ✓ Line charts for:
+     - Blood Pressure trends
+     - Heart Rate trends
+     - Sugar Level trends
+   ✓ Health status indicators
+   ✓ Responsive chart design
+
+5. AI-POWERED HEALTH SUMMARIES (Google Cloud Gemini)
+   ✓ Integration with Google Cloud Gemini API
+   ✓ AI-generated health trend analysis
+   ✓ Non-diagnostic explanations in simple language
+   ✓ Automatic summary generation from vital signs
+   ✓ Server-side API route for secure API key handling
+   ✓ Summary display with appropriate disclaimers
+
+6. PATIENT TRANSFER SYSTEM (CORE FEATURE)
+   ✓ Transfer request creation ONLY by hospitals
+   ✓ Transfer type selection (Emergency/Non-Emergency)
+   ✓ Transfer status tracking:
+     - Requested
+     - Accepted
+     - Completed (optional)
+   ✓ Transfer acceptance handled ONLY by hospitals
+   ✓ Transfer request details and reason
+   ✓ Timestamp tracking (requested, accepted, completed)
+   ✓ Access control: Patient data only accessible after transfer acceptance
+   ✓ Transfer history view for all roles (read-only for doctors and patients)
+   ✓ Transfer detail page with full information
+
+7. MEDICAL REPORTS UPLOAD & MANAGEMENT
+   ✓ File upload to Supabase Storage (private bucket)
+   ✓ Report metadata storage in database
+   ✓ Report name and type tracking
+   ✓ Secure file URL management
+   ✓ Report listing and viewing
+   ✓ File download/view functionality
+   ✓ Upload timestamp tracking
+   ✓ Storage bucket policies for secure access
+
+8. REAL-TIME CHAT (MINIMAL TELEMEDICINE)
+   ✓ Supabase Realtime integration
+   ✓ Transfer coordination chat
+   ✓ Real-time message updates
+   ✓ Message history per transfer
+   ✓ Sender identification
+   ✓ Timestamp display for messages
+   ✓ Chat interface for transfer participants
+
+DATABASE & SECURITY FEATURES
+================================================================================
+
+9. DATABASE SCHEMA
+   ✓ PostgreSQL database via Supabase
+   ✓ UUID-based primary keys
+   ✓ Foreign key relationships
+   ✓ Timestamp auto-management (created_at)
+   ✓ Proper indexing for performance
+   ✓ Data integrity constraints
+
+10. ROW LEVEL SECURITY (RLS)
+    ✓ Database-level RLS intentionally disabled for demo stability
+    ✓ Access control enforced at application and API layer
+    ✓ Role-based permissions validated server-side
+    ✓ Secure data filtering based on user role and transfer context
+    ✓ Fine-grained database RLS planned as a future enhancement
+
+11. DATA PRIVACY & SECURITY
+    ✓ Least-privilege access principles
+    ✓ Secure file storage (private buckets)
+    ✓ Server-side API key management
+    ✓ Authentication-required routes
+    ✓ Role-based data filtering
+
+USER INTERFACE FEATURES
+================================================================================
+
+12. DASHBOARD
+    ✓ Role-specific dashboard views
+    ✓ Quick action buttons
+    ✓ Recent activity display
+    ✓ Transfer status overview
+    ✓ Health records summary
+    ✓ Navigation to all features
+
+13. NAVIGATION & LAYOUT
+    ✓ Responsive navigation bar
+    ✓ Role-based menu items
+    ✓ Breadcrumb navigation
+    ✓ Back navigation buttons
+    ✓ Consistent UI/UX design
+    ✓ Tailwind CSS styling
+
+14. FORMS & INPUT
+    ✓ Health record entry form
+    ✓ Transfer request form
+    ✓ Medical report upload form
+    ✓ User registration form
+    ✓ Login form
+    ✓ Form validation
+    ✓ Error handling and display
+
+15. DATA DISPLAY
+    ✓ Health records table view
+    ✓ Transfer list table
+    ✓ Medical reports table
+    ✓ Patient information cards
+    ✓ Status badges and indicators
+    ✓ Date/time formatting
+    ✓ Empty state messages
+
+TECHNICAL FEATURES
+================================================================================
+
+16. NEXT.JS APP ROUTER
+    ✓ Server-side rendering
+    ✓ Server components for data fetching
+    ✓ Client components for interactivity
+    ✓ API routes for backend operations
+    ✓ Route protection middleware
+    ✓ TypeScript type safety
+
+17. SUPABASE INTEGRATION
+    ✓ Supabase client setup (browser & server)
+    ✓ Authentication integration
+    ✓ Database queries with type safety
+    ✓ Realtime subscriptions
+    ✓ Storage operations
+    ✓ Session management
+
+18. GOOGLE CLOUD GEMINI INTEGRATION
+    ✓ Gemini API client setup
+    ✓ Health data analysis prompts
+    ✓ Non-diagnostic summary generation
+    ✓ Error handling
+    ✓ API route for secure access
+
+19. TYPE SAFETY
+    ✓ TypeScript throughout
+    ✓ Database type definitions
+    ✓ Component prop types
+    ✓ API response types
+    ✓ Type-safe database queries
+
+20. ERROR HANDLING
+    ✓ Form validation errors
+    ✓ API error handling
+    ✓ Database error messages
+    ✓ User-friendly error displays
+    ✓ Loading states
+    ✓ Network error handling
+
+DEMO & PRESENTATION FEATURES
+================================================================================
+
+21. LANDING PAGE
+    ✓ Project introduction
+    ✓ Feature highlights
+    ✓ Call-to-action buttons
+    ✓ Modern, clean design
+
+22. USER FLOWS
+    ✓ Complete patient registration flow
+    ✓ Health record entry flow
+    ✓ Transfer request flow
+    ✓ Transfer acceptance flow
+    ✓ Report upload flow
+    ✓ Chat interaction flow
+
+FEATURES NOT INCLUDED (BY DESIGN)
+================================================================================
+
+❌ Social login (Google, Facebook, etc.)
+❌ OTP/Magic link authentication
+❌ Appointment scheduling
+❌ Inventory management
+❌ Billing/payment systems
+❌ Video calling (only chat included)
+❌ Full telemedicine platform
+❌ Prescription management
+❌ Lab test ordering
+❌ Insurance integration
+
+FUTURE ENHANCEMENT IDEAS (POST-HACKATHON)
+================================================================================
+
+○ Push notifications for transfer updates
+○ Email notifications
+○ PDF report generation
+○ Advanced analytics dashboard
+○ Export health data functionality
+○ Multi-language support
+○ Mobile app version
+○ Advanced search and filtering
+○ Audit logs for data access
+○ Two-factor authentication
+○ Advanced chart types and analytics
+○ Integration with medical devices
+○ HL7/FHIR compliance
+○ HIPAA compliance enhancements
+○ Advanced reporting features
+
+================================================================================
+FEATURE STATUS LEGEND
+================================================================================
+✓ = Implemented and working
+○ = Future enhancement (not in scope)
+❌ = Explicitly excluded from scope
+
+================================================================================
+TOTAL CORE FEATURES: 22 Major Feature Categories
+STATUS: Core patient transfer workflow implemented and ready for demo
+================================================================================
+
