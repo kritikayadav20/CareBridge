@@ -28,11 +28,12 @@ export async function DELETE(
     }
 
     // Get user role
-    const { data: userData } = await supabase
+    const userResult = await supabase
       .from('users')
       .select('role, hospital_id')
       .eq('id', user.id)
-      .single()
+      .single() as { data: { role: string; hospital_id: string | null } | null }
+    const userData = userResult.data
 
     if (!userData) {
       return NextResponse.json(
@@ -42,11 +43,13 @@ export async function DELETE(
     }
 
     // Get the health record to find the patient
-    const { data: record, error: recordError } = await supabase
+    const recordResult = await supabase
       .from('health_records')
       .select('id, patient_id')
       .eq('id', recordId)
-      .single()
+      .single() as { data: { id: string; patient_id: string } | null; error: any }
+    const record = recordResult.data
+    const recordError = recordResult.error
 
     if (recordError) {
       console.error('Error fetching health record:', recordError)
@@ -64,13 +67,15 @@ export async function DELETE(
     }
 
     // Verify access based on role
-    if (userData.role === 'patient') {
+    const userRole = (userData as { role: string })?.role
+    if (userRole === 'patient') {
       // Patient: verify the health record belongs to this patient
-      const { data: patient } = await supabase
+      const result = await supabase
         .from('patients')
         .select('id')
         .eq('user_id', user.id)
-        .single()
+        .single() as { data: { id: string } | null }
+      const patient = result.data
 
       if (!patient || patient.id !== record.patient_id) {
         return NextResponse.json(
@@ -78,13 +83,14 @@ export async function DELETE(
           { status: 403 }
         )
       }
-    } else if (userData.role === 'doctor') {
+    } else if (userRole === 'doctor') {
       // Doctor: verify patient is at the doctor's hospital
-      const { data: patient } = await supabase
+      const patientResult = await supabase
         .from('patients')
         .select('current_hospital_id')
         .eq('id', record.patient_id)
-        .single()
+        .single() as { data: { current_hospital_id: string | null } | null }
+      const patient = patientResult.data
 
       if (!patient) {
         return NextResponse.json(

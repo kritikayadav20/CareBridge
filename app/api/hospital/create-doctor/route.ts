@@ -14,11 +14,12 @@ export async function POST(request: Request) {
       )
     }
 
-    const { data: userProfile } = await supabase
+    const userResult = await supabase
       .from('users')
       .select('role')
       .eq('id', authUser.id)
-      .single()
+      .single() as { data: { role: string } | null }
+    const userProfile = userResult.data
 
     if (!userProfile || userProfile.role !== 'hospital') {
       return NextResponse.json(
@@ -85,8 +86,8 @@ export async function POST(request: Request) {
     }
 
     // Create user profile with doctor role and link to hospital
-    const { error: profileError } = await supabase
-      .from('users')
+    const { error: profileError } = await (supabase
+      .from('users') as any)
       .insert({
         id: authData.user.id,
         email: normalizedEmail,
@@ -98,7 +99,7 @@ export async function POST(request: Request) {
 
     // If direct insert fails due to RLS, try using the database function
     if (profileError && profileError.message.includes('row-level security')) {
-      const { error: functionError } = await supabase.rpc('create_user_profile', {
+      const { error: functionError } = await (supabase.rpc as any)('create_user_profile', {
         p_user_id: authData.user.id,
         p_email: normalizedEmail,
         p_role: 'doctor',
@@ -114,8 +115,8 @@ export async function POST(request: Request) {
       }
 
       // Update hospital_id separately if function doesn't support it
-      await supabase
-        .from('users')
+      await (supabase
+        .from('users') as any)
         .update({ hospital_id: authUser.id })
         .eq('id', authData.user.id)
     } else if (profileError) {

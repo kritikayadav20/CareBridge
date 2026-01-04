@@ -1,0 +1,1278 @@
+================================================================================
+CAREBRIDGE - COMPLETE PROJECT DOCUMENTATION
+================================================================================
+Patient Transfer-Centric Healthcare Platform for Google TechSprint 2026
+================================================================================
+
+TABLE OF CONTENTS
+================================================================================
+1. Project Overview
+2. Technology Stack
+3. Project Structure
+4. Database Schema
+5. Authentication & Authorization
+6. User Roles & Permissions
+7. Features & Functionality
+8. API Routes
+9. Components
+10. UI/UX Design System
+11. File Structure
+12. Environment Variables
+13. Dependencies
+14. Setup Instructions
+15. Deployment
+16. Security Features
+17. Workflows & User Flows
+18. Known Issues & Limitations
+19. Future Enhancements
+20. Contact & Support
+
+================================================================================
+1. PROJECT OVERVIEW
+================================================================================
+
+Project Name: CareBridge
+Version: 0.1.0
+Purpose: A secure, compassionate healthcare platform for seamless patient data 
+         transfer between hospitals during emergency and non-emergency transfers.
+Built For: Google TechSprint 2026
+Status: Production-ready for demo/presentation
+
+Core Mission:
+- Ensure continuous care during patient transfers
+- Provide secure, real-time data sharing between hospitals
+- Enable AI-powered health insights for medical professionals
+- Maintain patient privacy and data security
+
+Key Differentiators:
+- Patient-centric design with caring, calm UI
+- Real-time coordination during transfers
+- AI-powered health trend analysis
+- Secure, role-based access control
+- Seamless hospital-to-hospital communication
+
+================================================================================
+2. TECHNOLOGY STACK
+================================================================================
+
+FRONTEND:
+---------
+- Next.js 16.1.1 (App Router)
+- React 19.2.3
+- TypeScript 5
+- Tailwind CSS 4
+- Recharts 3.6.0 (for health data visualization)
+
+BACKEND & DATABASE:
+-------------------
+- Supabase (PostgreSQL database)
+- Supabase Authentication
+- Supabase Storage (for medical reports)
+- Supabase Realtime (for chat functionality)
+
+AI & EXTERNAL SERVICES:
+-----------------------
+- Google Cloud Gemini API (@google/generative-ai 0.24.1)
+  - Used for AI-powered health summaries
+  - Server-side integration only
+
+DEVELOPMENT TOOLS:
+------------------
+- ESLint 9
+- TypeScript
+- Node.js 18+ (required)
+
+DEPLOYMENT:
+-----------
+- Vercel-ready (Next.js optimized)
+- Environment-based configuration
+
+================================================================================
+3. PROJECT STRUCTURE
+================================================================================
+
+Root Directory Structure:
+--------------------------
+healthcare/
+├── app/                          # Next.js App Router
+│   ├── (auth)/                   # Authentication pages (route group)
+│   │   ├── login/
+│   │   │   └── page.tsx          # Login page
+│   │   └── signup/
+│   │       └── page.tsx          # Signup page
+│   ├── api/                      # API routes
+│   │   ├── admin/
+│   │   │   └── create-account/
+│   │   │       └── route.ts      # Admin account creation
+│   │   ├── auth/
+│   │   │   ├── logout/
+│   │   │   │   └── route.ts      # Logout endpoint
+│   │   │   └── signup/
+│   │   │       └── route.ts      # Signup endpoint
+│   │   ├── health-records/
+│   │   │   └── [id]/
+│   │   │       └── route.ts      # Health record CRUD
+│   │   ├── health-summary/
+│   │   │   └── route.ts          # AI health summary generation
+│   │   ├── hospital/
+│   │   │   └── create-doctor/
+│   │   │       └── route.ts     # Doctor account creation
+│   │   ├── patients/
+│   │   │   └── ensure-record/
+│   │   │       └── route.ts     # Patient record creation
+│   │   ├── reports/
+│   │   │   └── [id]/
+│   │   │       └── signed-url/
+│   │   │           └── route.ts   # Medical report signed URL
+│   │   └── transfers/
+│   │       └── [id]/
+│   │           └── cancel/
+│   │               └── route.ts # Transfer cancellation
+│   ├── dashboard/                # Dashboard pages
+│   │   ├── admin/
+│   │   │   └── page.tsx         # Admin dashboard
+│   │   ├── doctor/
+│   │   │   └── patients/
+│   │   │       ├── [id]/
+│   │   │       │   ├── page.tsx # Doctor patient detail
+│   │   │       │   ├── health-records/
+│   │   │       │   │   └── [recordId]/
+│   │   │       │   │       └── edit/
+│   │   │       │   │           └── page.tsx
+│   │   │       │   └── reports/
+│   │   │       │       └── page.tsx # Doctor reports management
+│   │   │       └── page.tsx     # Doctor patients list
+│   │   ├── health-records/
+│   │   │   ├── page.tsx         # Patient health records list
+│   │   │   ├── add/
+│   │   │   │   └── page.tsx     # Add health record (doctor only)
+│   │   │   └── [id]/
+│   │   │       └── edit/
+│   │   │           └── page.tsx # Edit health record
+│   │   ├── hospital/
+│   │   │   ├── doctors/
+│   │   │   │   └── page.tsx     # Hospital doctor management
+│   │   │   └── patients/
+│   │   │       ├── page.tsx     # Hospital patients list
+│   │   │       └── [id]/
+│   │   │           └── page.tsx # Hospital patient detail
+│   │   ├── page.tsx             # Main dashboard (role-based)
+│   │   ├── profile/
+│   │   │   └── page.tsx         # User profile page
+│   │   ├── reports/
+│   │   │   └── page.tsx         # Patient reports view
+│   │   └── transfers/
+│   │       ├── page.tsx         # Transfers list
+│   │       ├── new/
+│   │       │   └── page.tsx     # New transfer request
+│   │       └── [id]/
+│   │           └── page.tsx     # Transfer detail page
+│   ├── favicon.ico
+│   ├── globals.css               # Global styles
+│   ├── layout.tsx                # Root layout
+│   └── page.tsx                  # Landing page
+├── components/                    # React components
+│   ├── ui/                       # UI primitives
+│   │   ├── Badge.tsx            # Status badges
+│   │   ├── Button.tsx           # Button component
+│   │   ├── Card.tsx             # Card container
+│   │   ├── StatusIndicator.tsx  # Transfer status indicator
+│   │   └── TransferSteps.tsx    # Transfer progress steps
+│   ├── AcceptTransferButton.tsx # Accept transfer action
+│   ├── AddHealthRecordForm.tsx  # Health record form
+│   ├── AddHealthRecordSection.tsx # Toggleable form section
+│   ├── AdminCreateAccountForm.tsx # Admin account form
+│   ├── AdmitPatientForm.tsx     # Patient admission form
+│   ├── CancelTransferButton.tsx # Cancel transfer action
+│   ├── CompleteTransferButton.tsx # Complete transfer action
+│   ├── CreateDoctorForm.tsx     # Doctor creation form
+│   ├── CreateDoctorSection.tsx  # Toggleable doctor form
+│   ├── HealthChart.tsx           # Health data visualization
+│   ├── HealthRecordRow.tsx       # Health record table row
+│   ├── HealthStatusIndicator.tsx # Vital signs status
+│   ├── HealthSummary.tsx         # AI health summary display
+│   ├── NewTransferForm.tsx      # Transfer request form
+│   ├── PatientReportsManager.tsx # Reports upload/view component
+│   ├── TransferCard.tsx          # Transfer card component
+│   ├── TransferChat.tsx          # Real-time chat component
+│   └── ViewReportButton.tsx     # Secure report viewer
+├── lib/                          # Utility libraries
+│   ├── supabase/
+│   │   ├── client.ts            # Browser Supabase client
+│   │   ├── middleware.ts        # Supabase middleware
+│   │   └── server.ts             # Server Supabase client
+│   ├── auth.ts                   # Authentication helpers
+│   ├── gemini.ts                 # Gemini API integration
+│   ├── routes.ts                 # Route access control
+│   └── storage.ts                # File storage utilities
+├── types/                        # TypeScript definitions
+│   ├── database.ts               # Database types
+│   └── index.ts                  # Shared types
+├── database/                     # Database scripts
+│   ├── schema.sql                # Main database schema
+│   ├── supabase-setup.sql       # Supabase setup
+│   ├── disable-storage-rls.sql  # Storage RLS policies
+│   ├── setup-medical-reports-storage.md # Storage setup guide
+│   └── [various migration files]
+├── middleware.ts                 # Next.js middleware
+├── package.json                  # Dependencies
+├── README.md                     # Quick start guide
+├── feature.txt                   # Feature list
+└── PROJECT_DOCUMENTATION.txt    # This file
+
+================================================================================
+4. DATABASE SCHEMA
+================================================================================
+
+DATABASE: PostgreSQL (via Supabase)
+UUID Extension: uuid-ossp
+
+TABLES:
+-------
+
+1. users
+   - id (UUID, PK, FK → auth.users)
+   - role (TEXT: 'patient' | 'doctor' | 'hospital')
+   - full_name (TEXT)
+   - email (TEXT, NOT NULL)
+   - phone (TEXT)
+   - created_at (TIMESTAMPTZ)
+   - hospital_id (UUID, FK → users.id) - for doctors
+
+2. patients
+   - id (UUID, PK)
+   - user_id (UUID, FK → users.id, UNIQUE)
+   - date_of_birth (DATE)
+   - gender (TEXT)
+   - address (TEXT)
+   - emergency_contact (TEXT)
+   - current_hospital_id (UUID, FK → users.id)
+   - admitted_at (TIMESTAMPTZ)
+   - created_at (TIMESTAMPTZ)
+
+3. health_records
+   - id (UUID, PK)
+   - patient_id (UUID, FK → patients.id)
+   - blood_pressure_systolic (INTEGER)
+   - blood_pressure_diastolic (INTEGER)
+   - heart_rate (INTEGER)
+   - sugar_level (DECIMAL(5,2))
+   - recorded_at (TIMESTAMPTZ, NOT NULL)
+   - created_at (TIMESTAMPTZ)
+
+4. transfers
+   - id (UUID, PK)
+   - patient_id (UUID, FK → patients.id)
+   - from_hospital_id (UUID, FK → users.id)
+   - to_hospital_id (UUID, FK → users.id)
+   - transfer_type (TEXT: 'emergency' | 'non-emergency')
+   - status (TEXT: 'requested' | 'accepted' | 'completed' | 'cancelled')
+   - reason (TEXT)
+   - requested_at (TIMESTAMPTZ)
+   - accepted_at (TIMESTAMPTZ)
+   - completed_at (TIMESTAMPTZ)
+   - created_at (TIMESTAMPTZ)
+
+5. medical_reports
+   - id (UUID, PK)
+   - patient_id (UUID, FK → patients.id)
+   - report_name (TEXT, NOT NULL)
+   - file_url (TEXT, NOT NULL)
+   - report_type (TEXT)
+   - uploaded_at (TIMESTAMPTZ)
+   - created_at (TIMESTAMPTZ)
+
+6. messages
+   - id (UUID, PK)
+   - transfer_id (UUID, FK → transfers.id)
+   - sender_id (UUID, FK → users.id)
+   - message (TEXT, NOT NULL)
+   - created_at (TIMESTAMPTZ)
+
+INDEXES:
+--------
+- idx_health_records_patient_id
+- idx_health_records_recorded_at
+- idx_transfers_patient_id
+- idx_transfers_to_hospital_id
+- idx_transfers_status
+- idx_messages_transfer_id
+- idx_messages_created_at
+
+ROW LEVEL SECURITY (RLS):
+-------------------------
+- RLS is ENABLED on all tables
+- Policies enforce role-based access
+- Storage RLS policies for medical-reports bucket
+- Application-level access control as additional layer
+
+STORAGE BUCKETS:
+----------------
+- medical-reports (PRIVATE)
+  - Used for storing medical report files
+  - Signed URLs generated for secure access
+  - RLS policies allow authenticated uploads
+
+================================================================================
+5. AUTHENTICATION & AUTHORIZATION
+================================================================================
+
+PROVIDER: Supabase Auth
+Method: Email + Password only
+
+AUTHENTICATION FLOW:
+--------------------
+1. User signs up via /signup (patients only)
+2. Supabase creates auth.users record
+3. API route creates public.users record with role
+4. User logs in via /login
+5. Session stored in cookies (httpOnly)
+6. Middleware validates session on protected routes
+
+SESSION MANAGEMENT:
+-------------------
+- Server-side session validation
+- Automatic token refresh via middleware
+- Session persistence across page reloads
+- Secure cookie storage
+
+AUTHENTICATION HELPERS (lib/auth.ts):
+-------------------------------------
+- getCurrentUser(): Get current authenticated user
+- requireAuth(): Require authentication (throws if not)
+- requireRole(role): Require specific role
+- requireAdmin(): Require admin role
+
+MIDDLEWARE PROTECTION:
+---------------------
+- All /dashboard/* routes require authentication
+- Role-based route access via lib/routes.ts
+- API routes protected individually
+- Automatic redirect to /login if unauthorized
+
+SIGNUP RESTRICTIONS:
+--------------------
+- Only patients can self-register
+- Doctors created by hospitals
+- Hospitals created by admins
+- Admin accounts created manually
+
+================================================================================
+6. USER ROLES & PERMISSIONS
+================================================================================
+
+ROLE 1: PATIENT
+---------------
+Permissions:
+- View own health records
+- View own medical reports (read-only)
+- View own transfer history
+- View AI health summaries
+- Update own profile
+- Cannot add/edit health records (doctors do this)
+- Cannot upload medical reports (doctors do this)
+
+Dashboard Features:
+- Patient profile card
+- Recent health records
+- Transfer history
+- Health charts and AI summary (view-only)
+
+ROLE 2: DOCTOR
+--------------
+Permissions:
+- View patients at assigned hospital
+- Add health records for hospital patients
+- Edit health records for hospital patients
+- Upload medical reports for hospital patients
+- View health records for hospital patients
+- View medical reports for hospital patients
+- View transfers for assigned hospital
+- Participate in transfer chat
+- Cannot request transfers (hospitals do this)
+- Cannot accept transfers (hospitals do this)
+
+Dashboard Features:
+- Hospital information display
+- My Patients list
+- Active Transfers list
+- Patient detail pages with full access
+
+ROLE 3: HOSPITAL
+----------------
+Permissions:
+- Request patient transfers
+- Accept incoming transfers
+- Cancel own transfer requests
+- View admitted patients
+- View patient data for accepted transfers
+- Admit patients to hospital
+- Create doctor accounts
+- Participate in transfer chat
+- Manage hospital doctors
+- Cannot add health records (doctors do this)
+
+Dashboard Features:
+- Admitted patients list
+- Incoming transfer requests
+- Outgoing transfer requests
+- Patient management
+- Doctor management
+
+ROLE 4: ADMIN (System)
+----------------------
+Permissions:
+- Create hospital accounts
+- System administration
+- Full access (for demo purposes)
+
+Dashboard Features:
+- Create Hospital Accounts button
+
+ROUTE ACCESS MATRIX:
+--------------------
+Route                    | Patient | Doctor | Hospital | Admin
+------------------------|---------|--------|----------|-------
+/dashboard               | ✓       | ✓      | ✓        | ✓
+/dashboard/health-records| ✓       | ✗      | ✗        | ✗
+/dashboard/reports       | ✓       | ✗      | ✗        | ✗
+/dashboard/doctor/patients| ✗      | ✓      | ✗        | ✗
+/dashboard/hospital/*    | ✗       | ✗      | ✓        | ✗
+/dashboard/admin         | ✗       | ✗      | ✗        | ✓
+/dashboard/transfers     | ✓       | ✓      | ✓        | ✓
+
+================================================================================
+7. FEATURES & FUNCTIONALITY
+================================================================================
+
+FEATURE 1: AUTHENTICATION
+--------------------------
+- Email/password signup (patients only)
+- Email/password login (all roles)
+- Secure session management
+- Automatic session refresh
+- Logout functionality
+- Profile management
+
+FEATURE 2: HEALTH RECORDS MANAGEMENT
+-------------------------------------
+- Add health records (doctors only)
+- Edit health records (doctors only)
+- Delete health records (doctors only)
+- View health records (patients, doctors, hospitals)
+- Track vital signs:
+  * Blood Pressure (Systolic/Diastolic)
+  * Heart Rate (bpm)
+  * Sugar Level (mg/dL)
+- Timestamp tracking for all records
+- Time-series data storage
+
+FEATURE 3: HEALTH DATA VISUALIZATION
+-------------------------------------
+- Interactive line charts (Recharts)
+- Blood pressure trends over time
+- Heart rate trends over time
+- Sugar level trends over time
+- Responsive chart design
+- Health status indicators
+- Color-coded status badges
+
+FEATURE 4: AI-POWERED HEALTH SUMMARIES
+---------------------------------------
+- Google Cloud Gemini integration
+- On-demand summary generation (button-triggered)
+- Non-diagnostic health trend analysis
+- Simple language explanations
+- Regenerate functionality
+- Error handling and retry
+- Server-side API key security
+
+FEATURE 5: PATIENT TRANSFER SYSTEM
+-----------------------------------
+- Transfer request creation (hospitals only)
+- Transfer type selection (Emergency/Non-Emergency)
+- Transfer reason specification
+- Transfer acceptance (receiving hospital)
+- Transfer cancellation (sending hospital, requested status only)
+- Transfer completion (optional)
+- Status tracking:
+  * Requested
+  * Accepted
+  * Completed
+  * Cancelled
+- Timestamp tracking (requested, accepted, completed)
+- Access control: Patient data accessible after acceptance
+- Transfer history view
+- Transfer detail page
+
+FEATURE 6: MEDICAL REPORTS MANAGEMENT
+--------------------------------------
+- File upload to Supabase Storage (doctors only)
+- Private bucket storage
+- Secure signed URL generation
+- Report metadata storage
+- Report listing (patients, doctors, hospitals)
+- Report viewing (secure, temporary URLs)
+- Report name and type tracking
+- Upload timestamp tracking
+
+FEATURE 7: REAL-TIME CHAT
+--------------------------
+- Supabase Realtime integration
+- Transfer coordination chat
+- Real-time message updates
+- Message history per transfer
+- Sender identification
+- Timestamp display
+- Chat interface for transfer participants
+- Automatic message loading
+
+FEATURE 8: PATIENT ADMISSION
+-----------------------------
+- Hospital admits patients
+- Patient-hospital association
+- Current hospital tracking
+- Admission timestamp
+- Patient search by email/ID
+
+FEATURE 9: DOCTOR MANAGEMENT
+-----------------------------
+- Hospitals create doctor accounts
+- Doctor-hospital association
+- Doctor assignment to hospital
+- Doctor list view
+
+FEATURE 10: ADMIN FUNCTIONALITY
+--------------------------------
+- Create hospital accounts
+- System administration
+- Account management
+
+================================================================================
+8. API ROUTES
+================================================================================
+
+All API routes are in app/api/
+
+AUTHENTICATION ROUTES:
+----------------------
+POST /api/auth/signup
+  - Creates patient account
+  - Body: { email, password, fullName, phone, role: 'patient' }
+  - Returns: { user, patient }
+
+POST /api/auth/logout
+  - Logs out user
+  - Clears session
+
+ADMIN ROUTES:
+-------------
+POST /api/admin/create-account
+  - Creates hospital account (admin only)
+  - Body: { email, password, fullName, role: 'hospital' }
+  - Returns: { user }
+
+HEALTH RECORDS ROUTES:
+----------------------
+GET /api/health-records/[id]
+  - Get health record by ID
+  - Access: Patient (own), Doctor (hospital patients), Hospital (accepted transfers)
+
+DELETE /api/health-records/[id]
+  - Delete health record
+  - Access: Patient (own), Doctor (hospital patients)
+
+HEALTH SUMMARY ROUTES:
+----------------------
+POST /api/health-summary
+  - Generate AI health summary
+  - Body: { patientId }
+  - Returns: { summary }
+  - Uses Google Cloud Gemini API
+
+HOSPITAL ROUTES:
+----------------
+POST /api/hospital/create-doctor
+  - Create doctor account (hospital only)
+  - Body: { email, password, fullName, phone }
+  - Returns: { user }
+
+PATIENT ROUTES:
+---------------
+POST /api/patients/ensure-record
+  - Ensure patient record exists
+  - Body: { userId }
+  - Returns: { patient }
+
+REPORT ROUTES:
+--------------
+GET /api/reports/[id]/signed-url
+  - Get signed URL for medical report
+  - Access: Patient (own), Doctor (hospital patients), Hospital (accepted transfers)
+  - Returns: { url }
+
+TRANSFER ROUTES:
+----------------
+POST /api/transfers/[id]/cancel
+  - Cancel transfer request (sending hospital only, requested status)
+  - Returns: { success }
+
+================================================================================
+9. COMPONENTS
+================================================================================
+
+UI COMPONENTS (components/ui/):
+-------------------------------
+- Badge.tsx: Status badges with variants (success, warning, danger, info, neutral, primary)
+- Button.tsx: Button with variants (primary, secondary, danger, outline, success, ghost)
+- Card.tsx: Container card with padding and shadow options
+- StatusIndicator.tsx: Transfer status and type indicator
+- TransferSteps.tsx: Transfer progress visualization
+
+FEATURE COMPONENTS:
+-------------------
+- AcceptTransferButton.tsx: Accept transfer action button
+- AddHealthRecordForm.tsx: Form to add health records (doctor only)
+- AddHealthRecordSection.tsx: Toggleable health record form section
+- AdminCreateAccountForm.tsx: Admin hospital account creation form
+- AdmitPatientForm.tsx: Hospital patient admission form
+- CancelTransferButton.tsx: Cancel transfer button with confirmation
+- CompleteTransferButton.tsx: Complete transfer action
+- CreateDoctorForm.tsx: Hospital doctor creation form
+- CreateDoctorSection.tsx: Toggleable doctor creation section
+- HealthChart.tsx: Interactive health data charts (Recharts)
+- HealthRecordRow.tsx: Health record table row with actions
+- HealthStatusIndicator.tsx: Vital signs status badges
+- HealthSummary.tsx: AI health summary display with generation button
+- NewTransferForm.tsx: Transfer request form
+- PatientReportsManager.tsx: Reports upload and listing component
+- TransferCard.tsx: Transfer card display component
+- TransferChat.tsx: Real-time chat component (Supabase Realtime)
+- ViewReportButton.tsx: Secure report viewer with signed URL
+
+================================================================================
+10. UI/UX DESIGN SYSTEM
+================================================================================
+
+DESIGN THEME: Caring, Calm, Trustworthy, Medical-Grade
+COLOR PALETTE: Light theme with soft rose/pink accents
+
+COLORS:
+-------
+Primary: Rose (#e11d48, #fb7185, #fff1f2)
+Background: Slate 50 (#f8fafc)
+Text: Slate 700-900 (#334155, #0f172a)
+Accents: Rose 500-600 for primary actions
+Success: Emerald 500
+Warning: Amber 500
+Danger: Red 500
+Info: Blue 500
+
+TYPOGRAPHY:
+-----------
+Font: Geist Sans (via Next.js)
+Headings: Bold, tracking-tight
+Body: Regular, readable line-height
+Labels: Semibold, uppercase tracking-wider
+
+COMPONENT STYLES:
+-----------------
+- Cards: White background, rounded-2xl, soft shadows
+- Buttons: Rounded-full, rose primary, soft shadows
+- Badges: Rounded-full, pastel backgrounds, ring borders
+- Forms: Clean inputs, rose focus rings
+- Tables: Clean borders, hover states
+
+ANIMATIONS:
+-----------
+- Fade-in-up: Page load animations
+- Float: Subtle background element animations
+- Hover: Scale and shadow transitions
+- Pulse: Status indicators
+
+RESPONSIVE DESIGN:
+------------------
+- Mobile-first approach
+- Breakpoints: sm, md, lg, xl
+- Flexible grid layouts
+- Responsive navigation
+- Touch-friendly buttons
+
+ACCESSIBILITY:
+--------------
+- Semantic HTML
+- ARIA labels where needed
+- Keyboard navigation
+- Focus states
+- Color contrast compliance
+
+================================================================================
+11. FILE STRUCTURE (DETAILED)
+================================================================================
+
+APP DIRECTORY:
+--------------
+app/
+├── (auth)/                    # Route group (no URL segment)
+│   ├── login/
+│   │   └── page.tsx          # Client component, login form
+│   └── signup/
+│       └── page.tsx          # Client component, signup form
+├── api/                      # API routes (server-side)
+│   ├── admin/
+│   │   └── create-account/
+│   │       └── route.ts      # POST: Create hospital account
+│   ├── auth/
+│   │   ├── logout/
+│   │   │   └── route.ts      # POST: Logout
+│   │   └── signup/
+│   │       └── route.ts      # POST: Patient signup
+│   ├── health-records/
+│   │   └── [id]/
+│   │       └── route.ts      # GET, DELETE: Health record operations
+│   ├── health-summary/
+│   │   └── route.ts          # POST: Generate AI summary
+│   ├── hospital/
+│   │   └── create-doctor/
+│   │       └── route.ts      # POST: Create doctor account
+│   ├── patients/
+│   │   └── ensure-record/
+│   │       └── route.ts      # POST: Ensure patient record
+│   ├── reports/
+│   │   └── [id]/
+│   │       └── signed-url/
+│   │           └── route.ts  # GET: Generate signed URL
+│   └── transfers/
+│       └── [id]/
+│           └── cancel/
+│               └── route.ts  # POST: Cancel transfer
+├── dashboard/
+│   ├── admin/
+│   │   └── page.tsx          # Server component, admin dashboard
+│   ├── doctor/
+│   │   └── patients/
+│   │       ├── [id]/
+│   │       │   ├── page.tsx  # Server component, patient detail
+│   │       │   ├── health-records/
+│   │       │   │   └── [recordId]/
+│   │       │   │       └── edit/
+│   │       │   │           └── page.tsx  # Client component, edit record
+│   │       │   └── reports/
+│   │       │       └── page.tsx  # Server component, reports management
+│   │       └── page.tsx      # Server component, patients list
+│   ├── health-records/
+│   │   ├── page.tsx          # Server component, records list
+│   │   ├── add/
+│   │   │   └── page.tsx      # Client component, add record (doctor only)
+│   │   └── [id]/
+│   │       └── edit/
+│   │           └── page.tsx   # Client component, edit record
+│   ├── hospital/
+│   │   ├── doctors/
+│   │   │   └── page.tsx      # Server component, doctor management
+│   │   └── patients/
+│   │       ├── page.tsx      # Server component, patients list
+│   │       └── [id]/
+│   │           └── page.tsx   # Server component, patient detail
+│   ├── page.tsx              # Server component, main dashboard
+│   ├── profile/
+│   │   └── page.tsx          # Server component, user profile
+│   ├── reports/
+│   │   └── page.tsx          # Server component, reports view (patient)
+│   └── transfers/
+│       ├── page.tsx          # Server component, transfers list
+│       ├── new/
+│       │   └── page.tsx      # Client component, new transfer form
+│       └── [id]/
+│           └── page.tsx      # Server component, transfer detail
+├── globals.css                # Global styles, CSS variables
+├── layout.tsx                 # Root layout (metadata, fonts)
+└── page.tsx                   # Landing page (server component)
+
+COMPONENTS DIRECTORY:
+---------------------
+components/
+├── ui/                        # Reusable UI primitives
+│   ├── Badge.tsx
+│   ├── Button.tsx
+│   ├── Card.tsx
+│   ├── StatusIndicator.tsx
+│   └── TransferSteps.tsx
+├── AcceptTransferButton.tsx
+├── AddHealthRecordForm.tsx
+├── AddHealthRecordSection.tsx
+├── AdminCreateAccountForm.tsx
+├── AdmitPatientForm.tsx
+├── CancelTransferButton.tsx
+├── CompleteTransferButton.tsx
+├── CreateDoctorForm.tsx
+├── CreateDoctorSection.tsx
+├── HealthChart.tsx
+├── HealthRecordRow.tsx
+├── HealthStatusIndicator.tsx
+├── HealthSummary.tsx
+├── NewTransferForm.tsx
+├── PatientReportsManager.tsx
+├── TransferCard.tsx
+├── TransferChat.tsx
+└── ViewReportButton.tsx
+
+LIB DIRECTORY:
+--------------
+lib/
+├── supabase/
+│   ├── client.ts             # Browser Supabase client
+│   ├── middleware.ts         # Supabase middleware helper
+│   └── server.ts             # Server Supabase client
+├── auth.ts                   # Authentication helpers
+├── gemini.ts                 # Gemini API client
+├── routes.ts                 # Route access control logic
+└── storage.ts                # File storage utilities
+
+TYPES DIRECTORY:
+----------------
+types/
+├── database.ts               # Database type definitions
+└── index.ts                  # Shared TypeScript types
+
+DATABASE DIRECTORY:
+-------------------
+database/
+├── schema.sql                # Main database schema
+├── supabase-setup.sql        # Supabase-specific setup
+├── disable-storage-rls.sql   # Storage RLS policies
+├── setup-medical-reports-storage.md # Storage setup guide
+└── [various migration files] # Historical migrations
+
+ROOT FILES:
+-----------
+- middleware.ts               # Next.js middleware
+- package.json                # Dependencies
+- README.md                   # Quick start
+- feature.txt                 # Feature list
+- PROJECT_DOCUMENTATION.txt   # This file
+
+================================================================================
+12. ENVIRONMENT VARIABLES
+================================================================================
+
+Required Environment Variables (.env.local):
+--------------------------------------------
+
+NEXT_PUBLIC_SUPABASE_URL=
+  - Your Supabase project URL
+  - Found in: Supabase Dashboard → Settings → API → Project URL
+  - Example: https://xxxxxxxxxxxxx.supabase.co
+
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+  - Your Supabase anonymous/public key
+  - Found in: Supabase Dashboard → Settings → API → anon/public key
+  - This key is safe to expose in client-side code
+
+GEMINI_API_KEY=
+  - Your Google Cloud Gemini API key
+  - Found in: Google AI Studio (https://makersuite.google.com/app/apikey)
+  - Server-side only (not exposed to client)
+  - Keep this secret!
+
+Environment Variable Notes:
+---------------------------
+- NEXT_PUBLIC_* variables are exposed to the browser
+- GEMINI_API_KEY is server-side only
+- Never commit .env.local to version control
+- Use .env.example for documentation (optional)
+
+================================================================================
+13. DEPENDENCIES
+================================================================================
+
+PRODUCTION DEPENDENCIES:
+------------------------
+@google/generative-ai: ^0.24.1
+  - Google Cloud Gemini API client
+  - Used for AI health summaries
+
+@supabase/ssr: ^0.8.0
+  - Supabase Server-Side Rendering utilities
+  - Used for Next.js integration
+
+@supabase/supabase-js: ^2.89.0
+  - Supabase JavaScript client
+  - Used for database, auth, storage, realtime
+
+next: 16.1.1
+  - Next.js framework
+  - App Router, Server Components, API Routes
+
+react: 19.2.3
+  - React library
+
+react-dom: 19.2.3
+  - React DOM renderer
+
+recharts: ^3.6.0
+  - Charting library
+  - Used for health data visualization
+
+DEVELOPMENT DEPENDENCIES:
+-------------------------
+@tailwindcss/postcss: ^4
+  - Tailwind CSS PostCSS plugin
+
+@types/node: ^20
+  - Node.js TypeScript types
+
+@types/react: ^19
+  - React TypeScript types
+
+@types/react-dom: ^19
+  - React DOM TypeScript types
+
+eslint: ^9
+  - Linting tool
+
+eslint-config-next: 16.1.1
+  - Next.js ESLint configuration
+
+tailwindcss: ^4
+  - Tailwind CSS framework
+
+typescript: ^5
+  - TypeScript compiler
+
+================================================================================
+14. SETUP INSTRUCTIONS
+================================================================================
+
+STEP 1: CLONE AND INSTALL
+--------------------------
+1. Clone the repository
+2. Navigate to project directory
+3. Run: npm install
+
+STEP 2: SET UP SUPABASE
+------------------------
+1. Create account at https://supabase.com
+2. Create new project
+3. Go to SQL Editor
+4. Run database/schema.sql
+5. Create storage bucket:
+   - Go to Storage → Create Bucket
+   - Name: medical-reports
+   - Make it PRIVATE (not public)
+   - Enable RLS
+6. Run database/disable-storage-rls.sql (for storage access)
+7. Get credentials:
+   - Settings → API → Project URL
+   - Settings → API → anon/public key
+
+STEP 3: SET UP GOOGLE CLOUD GEMINI
+-----------------------------------
+1. Go to https://makersuite.google.com/app/apikey
+2. Create API key
+3. Enable Gemini API in Google Cloud Console
+4. Copy API key
+
+STEP 4: CONFIGURE ENVIRONMENT
+------------------------------
+1. Create .env.local in root directory
+2. Add:
+   NEXT_PUBLIC_SUPABASE_URL=your_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+   GEMINI_API_KEY=your_key
+
+STEP 5: RUN DEVELOPMENT SERVER
+-------------------------------
+1. Run: npm run dev
+2. Open: http://localhost:3000
+
+STEP 6: CREATE TEST ACCOUNTS
+-----------------------------
+1. Sign up as patient (via /signup)
+2. Create hospital account (via admin or SQL)
+3. Create doctor account (via hospital dashboard)
+4. Admit patient to hospital
+5. Test features
+
+================================================================================
+15. DEPLOYMENT
+================================================================================
+
+DEPLOYMENT PLATFORM: Vercel (Recommended)
+-----------------------------------------
+1. Push code to GitHub
+2. Import project in Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy
+
+ENVIRONMENT VARIABLES IN PRODUCTION:
+------------------------------------
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY
+- GEMINI_API_KEY
+
+BUILD COMMAND:
+--------------
+npm run build
+
+START COMMAND:
+--------------
+npm start
+
+DEPLOYMENT CHECKLIST:
+---------------------
+✓ Environment variables set
+✓ Supabase project active
+✓ Storage bucket created
+✓ Database schema applied
+✓ RLS policies enabled
+✓ Gemini API key valid
+✓ Build succeeds locally
+✓ All routes accessible
+✓ Authentication works
+✓ File uploads work
+
+================================================================================
+16. SECURITY FEATURES
+================================================================================
+
+AUTHENTICATION SECURITY:
+------------------------
+- Secure password hashing (Supabase)
+- HTTP-only session cookies
+- Automatic token refresh
+- Server-side session validation
+- Protected API routes
+
+AUTHORIZATION SECURITY:
+----------------------
+- Role-based access control (RBAC)
+- Server-side role verification
+- Route-level access control
+- API-level permission checks
+- Middleware protection
+
+DATA SECURITY:
+--------------
+- Row Level Security (RLS) on all tables
+- Application-level access control
+- Secure file storage (private buckets)
+- Signed URLs for file access
+- Server-side API key management
+
+PRIVACY FEATURES:
+-----------------
+- Patients can only access own data
+- Hospitals access data only for accepted transfers
+- Doctors access data only for hospital patients
+- Secure file uploads
+- Encrypted data transmission (HTTPS)
+
+BEST PRACTICES:
+---------------
+- Never expose API keys to client
+- Validate all user inputs
+- Sanitize file uploads
+- Use parameterized queries
+- Implement rate limiting (future)
+- Audit logs (future)
+
+================================================================================
+17. WORKFLOWS & USER FLOWS
+================================================================================
+
+WORKFLOW 1: PATIENT REGISTRATION
+---------------------------------
+1. User visits landing page
+2. Clicks "Get Started" or "Sign Up"
+3. Fills signup form (email, password, name, phone)
+4. Submits form
+5. Account created in Supabase Auth
+6. Patient record created in database
+7. User automatically logged in
+8. Redirected to patient dashboard
+
+WORKFLOW 2: HEALTH RECORD ENTRY (DOCTOR)
+-----------------------------------------
+1. Doctor logs in
+2. Navigates to "My Patients"
+3. Clicks on patient
+4. Clicks "Add Patient Record" button
+5. Form appears
+6. Doctor enters vital signs
+7. Submits form
+8. Record saved to database
+9. Form closes automatically
+10. Record appears in patient's health records
+
+WORKFLOW 3: TRANSFER REQUEST (HOSPITAL)
+----------------------------------------
+1. Hospital logs in
+2. Navigates to "Transfers" → "Request Transfer"
+3. Selects patient from dropdown
+4. Selects destination hospital
+5. Chooses transfer type (Emergency/Non-Emergency)
+6. Enters reason (optional)
+7. Submits request
+8. Transfer created with "requested" status
+9. Receiving hospital sees in "Incoming Transfers"
+
+WORKFLOW 4: TRANSFER ACCEPTANCE (HOSPITAL)
+-------------------------------------------
+1. Receiving hospital logs in
+2. Sees transfer in "Incoming Transfers"
+3. Clicks "Review & Accept"
+4. Views transfer details
+5. Clicks "Accept Transfer"
+6. Transfer status changes to "accepted"
+7. Patient data becomes accessible
+8. Chat becomes available
+9. Transfer appears in "Active Transfers"
+
+WORKFLOW 5: MEDICAL REPORT UPLOAD (DOCTOR)
+-------------------------------------------
+1. Doctor navigates to patient detail page
+2. Clicks "Medical Reports" button
+3. Clicks "Upload Report"
+4. Selects file
+5. Enters report name and type
+6. Submits upload
+7. File uploaded to Supabase Storage
+8. Metadata saved to database
+9. Report appears in list
+10. Patient can view report
+
+WORKFLOW 6: AI HEALTH SUMMARY GENERATION
+-----------------------------------------
+1. User (patient/doctor/hospital) views health records
+2. Clicks "Generate AI Health Summary" button
+3. Loading state shown
+4. API call to /api/health-summary
+5. Gemini API analyzes health data
+6. Summary generated
+7. Summary displayed
+8. User can regenerate if needed
+
+WORKFLOW 7: REAL-TIME CHAT
+---------------------------
+1. Transfer is accepted
+2. User navigates to transfer detail page
+3. Chat section visible
+4. User types message
+5. Message sent via Supabase Realtime
+6. All participants see message instantly
+7. Message history persists
+8. Chat available until transfer completed
+
+================================================================================
+18. KNOWN ISSUES & LIMITATIONS
+================================================================================
+
+KNOWN LIMITATIONS:
+------------------
+1. RLS is intentionally simplified for demo stability
+2. No email notifications
+3. No push notifications
+4. No file size validation (should add)
+5. No rate limiting on API routes
+6. No audit logging
+7. No data export functionality
+8. No multi-language support
+9. No mobile app version
+10. Limited error recovery
+
+DEMO CONSTRAINTS:
+-----------------
+- Built for hackathon demo
+- Not production-ready without enhancements
+- HIPAA compliance not fully implemented
+- Security audits recommended for production
+- Performance optimization needed for scale
+
+TECHNICAL DEBT:
+---------------
+- Some error handling could be improved
+- Loading states could be more consistent
+- Form validation could be enhanced
+- Type safety could be stricter in some areas
+- Test coverage is minimal (no tests included)
+
+================================================================================
+19. FUTURE ENHANCEMENTS
+================================================================================
+
+SHORT-TERM:
+-----------
+- Email notifications for transfers
+- Push notifications
+- File size validation
+- Rate limiting
+- Enhanced error messages
+- Loading state improvements
+- Form validation enhancements
+
+MEDIUM-TERM:
+------------
+- Audit logging
+- Data export (PDF, CSV)
+- Advanced analytics dashboard
+- Search and filtering
+- Multi-language support
+- Mobile responsive improvements
+- Performance optimization
+
+LONG-TERM:
+----------
+- Mobile app (React Native)
+- Video calling integration
+- HL7/FHIR compliance
+- HIPAA compliance certification
+- Integration with medical devices
+- Advanced reporting features
+- Two-factor authentication
+- Advanced chart types
+- Machine learning predictions
+
+================================================================================
+20. CONTACT & SUPPORT
+================================================================================
+
+PROJECT INFORMATION:
+--------------------
+Project Name: CareBridge
+Version: 0.1.0
+Built For: Google TechSprint 2026
+Repository: https://github.com/kritikayadav20/CareBridge
+
+TECHNICAL STACK:
+----------------
+- Frontend: Next.js 16, React 19, TypeScript, Tailwind CSS
+- Backend: Supabase (PostgreSQL, Auth, Storage, Realtime)
+- AI: Google Cloud Gemini API
+- Charts: Recharts
+
+LICENSE:
+--------
+Built for Google TechSprint 2026
+Demo/Educational purposes
+
+SUPPORT:
+--------
+For issues, questions, or contributions:
+- Check README.md for quick start
+- Review this documentation
+- Check feature.txt for feature list
+- Review database/schema.sql for database structure
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================
+
+This documentation covers all aspects of the CareBridge project.
+For specific implementation details, refer to the source code.
+For setup instructions, refer to README.md.
+For feature list, refer to feature.txt.
+
+Last Updated: 2026
+Version: 1.0
+

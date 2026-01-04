@@ -8,46 +8,6 @@ import AdminCreateAccountForm from '@/components/AdminCreateAccountForm'
 export default async function AdminPage() {
   const user = await requireAdmin()
 
-  const handleCreateAccount = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setSuccess(null)
-    setCreating(true)
-
-    try {
-      const response = await fetch('/api/admin/create-account', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        // Show detailed error if available
-        const errorMsg = data.details 
-          ? `${data.error}\n\nDetails: ${data.details}` 
-          : data.error || 'Failed to create account'
-        throw new Error(errorMsg)
-      }
-
-      setSuccess(`Account created successfully! Email: ${formData.email}`)
-      setFormData({
-        email: '',
-        password: '',
-        fullName: '',
-        phone: '',
-        role: 'doctor',
-      })
-    } catch (err: any) {
-      setError(err.message || 'Failed to create account')
-    } finally {
-      setCreating(false)
-    }
-  }
-
   return (
     <div className="min-h-screen bg-slate-50">
       <nav className="bg-white border-b border-slate-200 shadow-sm">

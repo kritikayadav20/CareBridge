@@ -15,11 +15,12 @@ export async function POST() {
     }
 
     // Check if user is a patient
-    const { data: userProfile } = await supabase
+    const userResult = await supabase
       .from('users')
       .select('role')
       .eq('id', user.id)
-      .single()
+      .single() as { data: { role: string } | null }
+    const userProfile = userResult.data
 
     if (!userProfile || userProfile.role !== 'patient') {
       return NextResponse.json(
@@ -29,17 +30,19 @@ export async function POST() {
     }
 
     // Check if patient record exists
-    let { data: patient, error: fetchError } = await supabase
+    const patientResult = await supabase
       .from('patients')
       .select('id')
       .eq('user_id', user.id)
-      .single()
+      .single() as { data: { id: string } | null; error: any }
+    let patient = patientResult.data
+    const fetchError = patientResult.error
 
     // If patient record doesn't exist, create it
     if (!patient) {
       // Try direct insert first
-      const { data: newPatient, error: insertError } = await supabase
-        .from('patients')
+      const { data: newPatient, error: insertError } = await (supabase
+        .from('patients') as any)
         .insert({ user_id: user.id })
         .select('id')
         .single()
@@ -47,7 +50,7 @@ export async function POST() {
       if (insertError) {
         // If RLS blocks it, use the database function
         // The function should return the patient_id directly
-        const { data: functionResult, error: functionError } = await supabase.rpc('create_patient_record', {
+        const { data: functionResult, error: functionError } = await (supabase.rpc as any)('create_patient_record', {
           p_user_id: user.id,
         })
 
@@ -85,11 +88,13 @@ export async function POST() {
           for (let i = 0; i < retries; i++) {
             await new Promise(resolve => setTimeout(resolve, delay))
             
-            const { data: createdPatient, error: fetchError } = await supabase
+            const createdPatientResult = await supabase
               .from('patients')
               .select('id')
               .eq('user_id', user.id)
-              .single()
+              .single() as { data: { id: string } | null; error: any }
+            const createdPatient = createdPatientResult.data
+            const fetchError = createdPatientResult.error
 
             if (createdPatient && !fetchError) {
               patient = createdPatient
@@ -115,6 +120,13 @@ export async function POST() {
       } else {
         patient = newPatient
       }
+    }
+
+    if (!patient) {
+      return NextResponse.json(
+        { error: 'Failed to create or retrieve patient record' },
+        { status: 500 }
+      )
     }
 
     return NextResponse.json({ 

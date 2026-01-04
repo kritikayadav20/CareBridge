@@ -25,11 +25,12 @@ export async function GET(
     }
 
     // Get user role and hospital_id if doctor
-    const { data: userData } = await supabase
+    const userResult = await supabase
       .from('users')
       .select('role, hospital_id')
       .eq('id', user.id)
-      .single()
+      .single() as { data: { role: string; hospital_id: string | null } | null }
+    const userData = userResult.data
 
     if (!userData) {
       return NextResponse.json(
@@ -39,11 +40,13 @@ export async function GET(
     }
 
     // Fetch the medical report to get patient_id and file_url (path)
-    const { data: report, error: reportError } = await supabase
+    const reportResult = await supabase
       .from('medical_reports')
       .select('id, patient_id, file_url')
       .eq('id', reportId)
-      .single()
+      .single() as { data: { id: string; patient_id: string; file_url: string } | null; error: any }
+    const report = reportResult.data
+    const reportError = reportResult.error
 
     if (reportError || !report) {
       console.error('Error fetching medical report:', reportError)
@@ -54,11 +57,13 @@ export async function GET(
     }
 
     // Fetch patient details to check current_hospital_id
-    const { data: patient, error: patientError } = await supabase
+    const patientResult = await supabase
       .from('patients')
       .select('id, user_id, current_hospital_id')
       .eq('id', report.patient_id)
-      .single()
+      .single() as { data: { id: string; user_id: string; current_hospital_id: string | null } | null; error: any }
+    const patient = patientResult.data
+    const patientError = patientResult.error
 
     if (patientError || !patient) {
       return NextResponse.json(

@@ -35,11 +35,12 @@ export default function EditHealthRecordPage() {
         }
 
         // Verify user is a doctor
-        const { data: userData } = await supabase
+        const userResult = await supabase
           .from('users')
           .select('role, hospital_id')
           .eq('id', user.id)
-          .single()
+          .single() as { data: { role: string; hospital_id: string | null } | null }
+        const userData = userResult.data
 
         if (userData?.role !== 'doctor') {
           setError('Only doctors can edit health records')
@@ -48,11 +49,12 @@ export default function EditHealthRecordPage() {
         }
 
         // Verify patient is at the doctor's hospital
-        const { data: patient } = await supabase
+        const patientResult = await supabase
           .from('patients')
           .select('current_hospital_id')
           .eq('id', patientId)
-          .single()
+          .single() as { data: { current_hospital_id: string | null } | null }
+        const patient = patientResult.data
 
         if (!patient) {
           setError('Patient not found')
@@ -111,11 +113,12 @@ export default function EditHealthRecordPage() {
       if (!user) throw new Error('Not authenticated')
 
       // Verify user is a doctor
-      const { data: userData } = await supabase
+      const userResult = await supabase
         .from('users')
         .select('role, hospital_id')
         .eq('id', user.id)
-        .single()
+        .single() as { data: { role: string; hospital_id: string | null } | null }
+      const userData = userResult.data
 
       if (userData?.role !== 'doctor') {
         throw new Error('Only doctors can edit health records')

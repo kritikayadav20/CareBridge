@@ -28,11 +28,12 @@ export async function POST(
     }
 
     // Get user role
-    const { data: userData } = await supabase
+    const userResult = await supabase
       .from('users')
       .select('role')
       .eq('id', user.id)
-      .single()
+      .single() as { data: { role: string } | null }
+    const userData = userResult.data
 
     if (!userData || userData.role !== 'hospital') {
       return NextResponse.json(
@@ -42,11 +43,13 @@ export async function POST(
     }
 
     // Get the transfer to verify ownership
-    const { data: transfer, error: transferError } = await supabase
+    const transferResult = await supabase
       .from('transfers')
       .select('id, from_hospital_id, status')
       .eq('id', transferId)
-      .single()
+      .single() as { data: { id: string; from_hospital_id: string | null; status: string } | null; error: any }
+    const transfer = transferResult.data
+    const transferError = transferResult.error
 
     if (transferError || !transfer) {
       return NextResponse.json(
@@ -72,8 +75,8 @@ export async function POST(
     }
 
     // Update transfer status to 'cancelled'
-    const { error: updateError } = await supabase
-      .from('transfers')
+    const { error: updateError } = await (supabase
+      .from('transfers') as any)
       .update({ status: 'cancelled' })
       .eq('id', transferId)
 

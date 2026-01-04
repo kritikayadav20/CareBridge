@@ -4,14 +4,14 @@ interface CardProps {
   children: ReactNode
   className?: string
   padding?: 'none' | 'sm' | 'md' | 'lg'
-  shadow?: 'none' | 'sm' | 'md'
+  shadow?: 'none' | 'sm' | 'md' | 'lg'
 }
 
 export default function Card({
   children,
   className = '',
   padding = 'md',
-  shadow = 'md'
+  shadow = 'sm'
 }: CardProps) {
   const paddingClasses = {
     none: '',
@@ -21,15 +21,15 @@ export default function Card({
   }
   
   const shadowClasses = {
-    none: '',
-    sm: 'shadow-sm',
-    md: 'shadow-md',
+    none: 'border border-slate-100',
+    sm: 'shadow-sm border border-slate-100',
+    md: 'shadow-md shadow-slate-200/40 border border-slate-100',
+    lg: 'shadow-lg shadow-slate-200/40 border border-slate-100'
   }
   
   return (
-    <div className={`bg-white rounded-xl ${paddingClasses[padding]} ${shadowClasses[shadow]} ${className}`}>
+    <div className={`bg-white rounded-2xl ${paddingClasses[padding]} ${shadowClasses[shadow]} ${className} transition-all duration-300`}>
       {children}
     </div>
   )
 }
-

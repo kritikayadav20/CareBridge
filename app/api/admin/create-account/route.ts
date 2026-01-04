@@ -1,5 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { Database } from '@/types/database'
+
+type UserProfile = Database['public']['Tables']['users']['Row']
+type UserInsert = Database['public']['Tables']['users']['Insert']
 
 export async function POST(request: Request) {
   try {
@@ -20,7 +24,7 @@ export async function POST(request: Request) {
       .eq('id', authUser.id)
       .single()
 
-    if (!userProfile || userProfile.role !== 'admin') {
+    if (!userProfile || (userProfile as UserProfile).role !== 'admin') {
       return NextResponse.json(
         { error: 'Forbidden: Admin access required' },
         { status: 403 }
@@ -109,19 +113,19 @@ export async function POST(request: Request) {
     }
 
     // Create user profile using database function (bypasses RLS)
-    const { error: profileError } = await supabase
-      .from('users')
+    const { error: profileError } = await (supabase
+      .from('users') as any)
       .insert({
         id: authData.user.id,
         email: normalizedEmail,
-        role: role,
+        role: role as 'hospital',
         full_name: fullName,
         phone: phone || null,
       })
 
     // If direct insert fails due to RLS, try using the database function
     if (profileError && profileError.message.includes('row-level security')) {
-      const { error: functionError } = await supabase.rpc('create_user_profile', {
+      const { error: functionError } = await (supabase.rpc as any)('create_user_profile', {
         p_user_id: authData.user.id,
         p_email: normalizedEmail,
         p_role: role,

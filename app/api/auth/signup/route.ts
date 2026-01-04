@@ -39,8 +39,8 @@ export async function POST(request: Request) {
 
     // Create user profile using database function (bypasses RLS)
     // First try direct insert, if that fails use the function
-    const { error: profileError } = await supabase
-      .from('users')
+    const { error: profileError } = await (supabase
+      .from('users') as any)
       .insert({
         id: authData.user.id,
         email: email,
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
 
     // If direct insert fails due to RLS, try using the database function
     if (profileError && profileError.message.includes('row-level security')) {
-      const { error: functionError } = await supabase.rpc('create_user_profile', {
+      const { error: functionError } = await (supabase.rpc as any)('create_user_profile', {
         p_user_id: authData.user.id,
         p_email: email,
         p_role: role,
@@ -74,15 +74,15 @@ export async function POST(request: Request) {
 
     // If patient, create patient record
     if (role === 'patient') {
-      const { error: patientError } = await supabase
-        .from('patients')
+      const { error: patientError } = await (supabase
+        .from('patients') as any)
         .insert({
           user_id: authData.user.id,
         })
 
       // If direct insert fails due to RLS, try using the database function
       if (patientError && patientError.message.includes('row-level security')) {
-        const { error: functionError } = await supabase.rpc('create_patient_record', {
+        const { error: functionError } = await (supabase.rpc as any)('create_patient_record', {
           p_user_id: authData.user.id,
         })
 
