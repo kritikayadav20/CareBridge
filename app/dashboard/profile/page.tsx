@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import Card from '@/components/ui/Card'
+import Button from '@/components/ui/Button'
 
 export default function ProfilePage() {
   const router = useRouter()

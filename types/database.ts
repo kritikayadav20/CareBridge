@@ -16,6 +16,7 @@ export interface Database {
           full_name: string | null
           email: string
           phone: string | null
+          hospital_id: string | null
           created_at: string
         }
         Insert: {
@@ -24,6 +25,7 @@ export interface Database {
           full_name?: string | null
           email: string
           phone?: string | null
+          hospital_id?: string | null
           created_at?: string
         }
         Update: {
@@ -32,6 +34,7 @@ export interface Database {
           full_name?: string | null
           email?: string
           phone?: string | null
+          hospital_id?: string | null
           created_at?: string
         }
       }
@@ -43,6 +46,7 @@ export interface Database {
           gender: string | null
           address: string | null
           emergency_contact: string | null
+          current_hospital_id: string | null
           created_at: string
         }
         Insert: {
@@ -52,6 +56,7 @@ export interface Database {
           gender?: string | null
           address?: string | null
           emergency_contact?: string | null
+          current_hospital_id?: string | null
           created_at?: string
         }
         Update: {
@@ -61,6 +66,7 @@ export interface Database {
           gender?: string | null
           address?: string | null
           emergency_contact?: string | null
+          current_hospital_id?: string | null
           created_at?: string
         }
       }
